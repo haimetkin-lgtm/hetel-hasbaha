@@ -38,7 +38,7 @@ export default function CheckPage() {
     }
 
     const { data, error: qError } = await supabase
-      .from("committees")
+      .from("machria_committees")
       .select("name, decisions_count, classified")
       .ilike("name", `%${committeeInput.trim()}%`)
       .limit(1)
@@ -69,7 +69,7 @@ export default function CheckPage() {
     setError(null);
     try {
       const { data, error: insertError } = await supabase
-        .from("cases")
+        .from("machria_cases")
         .insert({
           committee_name: lookup.committee,
           address: address || null,

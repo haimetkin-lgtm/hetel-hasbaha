@@ -1,10 +1,11 @@
 -- מיזם "בדיקת היטל השבחה" — סכמת Supabase
--- להריץ בפרויקט Supabase ייעודי חדש (לא באותו פרויקט של insure-vda)
+-- להריץ בפרויקט Supabase הקיים של insure-vda (לא פרויקט חדש — הגענו למגבלת 2 פרויקטים חינמיים).
+-- כל הטבלאות בקידומת machria_ כדי לא להתנגש בטבלאות הקיימות (cases, leads וכו')
 
 create extension if not exists "pgcrypto";
 
 -- ועדות מקומיות: מטא-דאטה מהמאגר הממשלתי + סטטוס סיווג
-create table if not exists committees (
+create table if not exists machria_committees (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
   decisions_count int not null default 0,
@@ -16,9 +17,9 @@ create table if not exists committees (
 );
 
 -- הכרעות: מטא-דאטה נטענת בבת אחת אחרי שלב 1 (סקרייפר), classification מתמלא לפי דרישה
-create table if not exists decisions (
+create table if not exists machria_decisions (
   id uuid primary key default gen_random_uuid(),
-  committee_id uuid references committees(id) on delete cascade,
+  committee_id uuid references machria_committees(id) on delete cascade,
   committee_name text not null,
   appraisal_header text not null,
   appraiser text,
@@ -36,13 +37,13 @@ create table if not exists decisions (
   unique (appraisal_header, publicity_date)
 );
 
-create index if not exists idx_decisions_committee on decisions(committee_id);
-create index if not exists idx_decisions_status on decisions(status);
+create index if not exists idx_machria_decisions_committee on machria_decisions(committee_id);
+create index if not exists idx_machria_decisions_status on machria_decisions(status);
 
 -- אצוות סיווג (Anthropic Batch API) — לוועדות גדולות שלא נכנסות בזמן ריצה אחד
-create table if not exists classification_batches (
+create table if not exists machria_classification_batches (
   id uuid primary key default gen_random_uuid(),
-  committee_id uuid references committees(id) on delete cascade,
+  committee_id uuid references machria_committees(id) on delete cascade,
   anthropic_batch_id text not null,
   status text not null default 'submitted' check (status in ('submitted', 'processing', 'ended', 'ingested', 'error')),
   decision_ids uuid[] not null, -- מיפוי custom_id -> decision.id
@@ -52,7 +53,7 @@ create table if not exists classification_batches (
 );
 
 -- תיקי לקוחות (מוצר 1: בדיקה מקדימה)
-create table if not exists cases (
+create table if not exists machria_cases (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   committee_name text not null,
@@ -73,16 +74,16 @@ create table if not exists cases (
 );
 
 -- שורה תחתונה: RLS. הלקוח קורא/כותב ישירות מהצד (anon key), אז חייבים מדיניות מגבילה.
-alter table committees enable row level security;
-alter table decisions enable row level security;
-alter table cases enable row level security;
+alter table machria_committees enable row level security;
+alter table machria_decisions enable row level security;
+alter table machria_cases enable row level security;
 
 -- committees: קריאה ציבורית (בשביל תצוגת המחיר), בלי כתיבה מהצד
-create policy "committees are publicly readable" on committees
+create policy "machria committees are publicly readable" on machria_committees
   for select using (true);
 
 -- decisions: לא נחשפות ללקוח ישירות בשלב הזה (המוצר עדיין לא מציג רשימת הכרעות ללקוח לבד) — בלי מדיניות select ציבורית
 
 -- cases: לקוח יכול ליצור תיק חדש (insert), אבל לא לקרוא/לעדכן תיקים של אחרים
-create policy "anyone can create a case" on cases
+create policy "anyone can create a machria case" on machria_cases
   for insert with check (true);

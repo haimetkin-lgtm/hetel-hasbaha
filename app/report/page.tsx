@@ -17,7 +17,7 @@ function ReportContent() {
       return;
     }
     supabase
-      .from("cases")
+      .from("machria_cases")
       .select("*")
       .eq("id", caseId)
       .single()
