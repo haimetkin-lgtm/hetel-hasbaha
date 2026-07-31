@@ -66,9 +66,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         {children}
         <footer className="text-center py-4 text-xs text-gray-400 border-t border-gray-100 mt-2">
-          חיים אטקין, שמאי מקרקעין, אנליסט נדל״ן, מומחה לנדל״ן וחוקר שוק · מייסד ובעלים של <span className="font-medium text-gray-500">בית שמאי</span>, בית הספר לפרקטיקה שמאית
+          חיים אטקין, שמאי מקרקעין ואנליסט נדל״ן · <span className="font-medium text-gray-500">בית שמאי®</span>, בית הספר לפרקטיקה שמאית
           <br />
-          © {new Date().getFullYear()} חיים אטקין · כל הזכויות שמורות · ט.ל.ח
+          © {new Date().getFullYear()} כל הזכויות שמורות · ט.ל.ח
         </footer>
         <Script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" strategy="afterInteractive" />
         <Script
