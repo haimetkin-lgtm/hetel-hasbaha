@@ -111,7 +111,7 @@ export default function CheckPage() {
         />
         <button
           type="submit"
-          className="bg-[#1e5a8a] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#14364f]"
+          className="bg-[#1e5a8a] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#14364f] cursor-pointer"
         >
           חיפוש
         </button>
@@ -121,6 +121,7 @@ export default function CheckPage() {
       {lookup.state === "not_found" && (
         <p className="text-sm text-[#8a2f22]">לא מצאנו ועדה בשם הזה. נסו לבדוק את האיות, או צרו קשר בוואטסאפ.</p>
       )}
+      {lookup.state !== "found" && error && <p className="text-sm text-[#8a2f22]">{error}</p>}
 
       {lookup.state === "found" && (
         <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
@@ -177,7 +178,7 @@ export default function CheckPage() {
           <button
             onClick={handlePay}
             disabled={submitting}
-            className="w-full bg-[#1e5a8a] text-white font-bold py-3 rounded-lg hover:bg-[#14364f] disabled:opacity-50"
+            className="w-full bg-[#1e5a8a] text-white font-bold py-3 rounded-lg hover:bg-[#14364f] disabled:opacity-50 cursor-pointer disabled:cursor-default"
           >
             {submitting ? "מעביר לתשלום..." : `המשך לתשלום · ${PRICE_TIERS[lookup.tier]} ₪`}
           </button>
