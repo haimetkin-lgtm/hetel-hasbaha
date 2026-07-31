@@ -22,6 +22,8 @@ export default function CheckPage() {
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [address, setAddress] = useState("");
+  const [block, setBlock] = useState("");
+  const [plot, setPlot] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +57,10 @@ export default function CheckPage() {
 
   async function handlePay() {
     if (lookup.state !== "found") return;
+    if (!block.trim() || !plot.trim()) {
+      setError("נא להזין גוש וחלקה");
+      return;
+    }
     if (!contactPhone.trim() && !contactEmail.trim()) {
       setError("נא להזין טלפון או אימייל לקבלת הדוח");
       return;
@@ -73,6 +79,8 @@ export default function CheckPage() {
         .insert({
           committee_name: lookup.committee,
           address: address || null,
+          block: block.trim(),
+          plot: plot.trim(),
           contact_name: contactName || null,
           contact_phone: contactPhone || null,
           contact_email: contactEmail || null,
@@ -142,6 +150,27 @@ export default function CheckPage() {
               onChange={(e) => setAddress(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
             />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="גוש"
+                required
+                value={block}
+                onChange={(e) => setBlock(e.target.value)}
+                className="w-1/2 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="חלקה"
+                required
+                value={plot}
+                onChange={(e) => setPlot(e.target.value)}
+                className="w-1/2 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <p className="text-xs text-gray-400">
+              נדרש כדי לאתר הכרעות על הנכס שלכם או על חלקות סמוכות באותה תוכנית
+            </p>
             <input
               type="text"
               placeholder="שם מלא"
