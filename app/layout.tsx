@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
-const SITE_URL = "https://haimetkin-lgtm.github.io/hetel-hasbaha";
+const SITE_ORIGIN = "https://haimetkin-lgtm.github.io";
+const SITE_URL = `${SITE_ORIGIN}/hetel-hasbaha`;
 
 const TITLE = "בדיקת סבירות ראשונית לדרישת היטל השבחה | בודקים לפני שמשלמים";
 const DESCRIPTION =
   "קיבלת דרישת היטל השבחה? בדקו תוך דקות מה קבעו שמאים מכריעים בהכרעות דומות באותה ועדה מקומית, לפני שאתם מחליטים אם לשלם או לבדוק. מבית השמאי חיים אטקין, מחבר הספר \"בועת נדל\"ן\".";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(SITE_ORIGIN),
   title: { default: TITLE, template: "%s | בדיקת היטל השבחה" },
   description: DESCRIPTION,
   applicationName: "בדיקת היטל השבחה",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   creator: "חיים אטקין",
   publisher: "חיים אטקין, שמאות מקרקעין",
   category: "נדל\"ן",
-  alternates: { canonical: "/" },
+  alternates: { canonical: SITE_URL },
   icons: { icon: "/favicon.svg" },
   robots: {
     index: true,
