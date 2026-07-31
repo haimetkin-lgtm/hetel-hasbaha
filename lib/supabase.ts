@@ -29,12 +29,14 @@ export interface CaseRow {
   address: string | null;
   block: string | null;
   plot: string | null;
+  plan_numbers: string | null;
   contact_name: string | null;
   contact_phone: string | null;
   contact_email: string | null;
   price_nis: number;
   paid: boolean;
   status: "pending_payment" | "queued_for_classification" | "ready" | "sent";
+  report_html: string | null;
   cardcom_deal_id: string | null;
 }
 
