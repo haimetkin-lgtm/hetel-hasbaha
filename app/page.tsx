@@ -1,6 +1,58 @@
+const FAQ = [
+  {
+    q: "מה זה היטל השבחה?",
+    a: "היטל השבחה הוא תשלום לוועדה המקומית לתכנון ובנייה, המחושב על עליית שווי נכס בעקבות אישור תוכנית, הקלה או שימוש חורג. שיעורו בדרך כלל מחצית מסכום ההשבחה שנקבעה.",
+  },
+  {
+    q: "כמה זמן יש להגיש השגה על היטל השבחה?",
+    a: "המועדים להשגה על שומת הוועדה קצרים, ובמקרים רבים עומדים על 45 יום בלבד ממועד קבלת השומה. ייתכנו מחלוקות על מהו מועד הקבלה בפועל, ולכן מומלץ לא להמתין לסוף התקופה.",
+  },
+  {
+    q: "מה זה שמאי מכריע?",
+    a: "כשיש מחלוקת בין שמאי הוועדה לשמאי מטעם בעל הנכס על גובה ההשבחה, כל צד יכול לפנות לשמאי מכריע, גורם מוסמך שמכריע בין השומות. הכרעותיו מתפרסמות במאגר ציבורי של משרד המשפטים.",
+  },
+  {
+    q: "איך בודקים אם כדאי לערער על דרישת היטל השבחה?",
+    a: "בדיקה ראשונית מאתרת הכרעות של שמאים מכריעים בוועדה הרלוונטית, ובודקת אם יש תקדימים או סוגיות דומות שעשויות להצדיק בדיקה מקצועית מלאה של שומת הוועדה, לפני שמחליטים אם להמשיך.",
+  },
+  {
+    q: "כמה עולה בדיקה מקדימה של היטל השבחה?",
+    a: "המחיר נע בין 280 ל-480 ₪, ונקבע לפי היקף ההכרעות הקיימות בוועדה המקומית הרלוונטית. המחיר המדויק מוצג לפני התשלום.",
+  },
+];
+
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
+const SERVICE_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  serviceType: "בדיקת סבירות ראשונית לדרישת היטל השבחה",
+  provider: {
+    "@type": "Person",
+    name: "חיים אטקין",
+    jobTitle: "שמאי מקרקעין",
+  },
+  areaServed: { "@type": "Country", name: "IL" },
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "ILS",
+    priceSpecification: { "@type": "PriceSpecification", minPrice: 280, maxPrice: 480, priceCurrency: "ILS" },
+  },
+};
+
 export default function Home() {
   return (
     <main className="max-w-2xl mx-auto px-4 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSON_LD) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }} />
       <section className="text-center mb-10">
         <h1 className="text-2xl md:text-3xl font-bold text-[#14364f] leading-snug mb-3">
           קיבלת דרישת היטל השבחה?
@@ -72,12 +124,24 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="text-center text-sm text-gray-500">
+      <section className="text-center text-sm text-gray-500 mb-10">
         <p>
           המועדים להשגה על שומת הוועדה קצרים, ובמקרים רבים עומדים על{" "}
           <strong className="text-[#8a2f22]">45 יום בלבד</strong> ממועד קבלת השומה. אל תמתין לסוף
           התקופה.
         </p>
+      </section>
+
+      <section>
+        <h2 className="font-bold text-[#14364f] mb-3 text-center">שאלות נפוצות</h2>
+        <div className="space-y-3">
+          {FAQ.map((item) => (
+            <details key={item.q} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
+              <summary className="font-medium text-[#14364f] cursor-pointer">{item.q}</summary>
+              <p className="text-sm text-gray-600 mt-2 leading-relaxed">{item.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
     </main>
   );
