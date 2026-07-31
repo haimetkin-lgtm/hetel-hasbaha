@@ -22,7 +22,7 @@ export default function Home() {
             href="/hetel-hasbaha/check/"
             className="inline-block bg-[#1e5a8a] hover:bg-[#14364f] text-white font-bold px-6 py-3 rounded-lg transition-colors"
           >
-            בדוק את הוועדה שלך — החל מ-280 ₪
+            בדוק את הוועדה שלך, החל מ-280 ₪
           </a>
           <a
             href="/hetel-hasbaha/sample-report.html"
@@ -57,6 +57,19 @@ export default function Home() {
           <li>קישור למסמך המקורי במאגר הממשלתי, לבקרה שלך</li>
           <li>אפשרות להמשך לבדיקה מקצועית של שומת הוועדה, להכנת מסמך עיקרי דברים ולשיחת ייעוץ אישית עם חיים אטקין</li>
         </ul>
+      </section>
+
+      <section className="mb-10">
+        <div className="font-bold text-[#14364f] mb-3 text-center">למי השירות מתאים?</div>
+        <ul className="text-sm text-gray-700 space-y-1.5 list-disc pr-5 max-w-xl mx-auto">
+          <li><strong>בעלי נכסים והציבור הרחב:</strong> האם יש הצדקה לבדוק לפני שממשיכים</li>
+          <li><strong>עורכי דין:</strong> איתור מהיר של הכרעות וטענות רלוונטיות</li>
+          <li><strong>שמאי מקרקעין:</strong> מחקר וסינון הכרעות לפי ועדה וסוגיה</li>
+          <li><strong>יזמים ובעלי מקרקעין:</strong> בדיקת חשיפה להיטל לפני עסקה</li>
+        </ul>
+        <p className="text-xs text-gray-400 text-center max-w-xl mx-auto mt-3">
+          הבדיקה אינה מחליפה שומה, ייעוץ משפטי או בדיקה מקצועית מלאה.
+        </p>
       </section>
 
       <section className="text-center text-sm text-gray-500">
