@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<title>בדיקת סבירות ראשונית לדרישת היטל השבחה — דוגמת דוח</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem 4rem; line-height: 1.8; color: #1a2733; background: #fafaf7; }
+  h1 { color: #1e5a8a; border-bottom: 3px solid #c9962e; padding-bottom: .5rem; font-size: 1.5rem; }
+  .intro { color: #4a5d70; margin-bottom: 1rem; }
+  section { background: #fff; border: 1px solid #e2ddd2; border-radius: 12px; padding: 1.5rem 1.8rem; margin-bottom: 2.5rem; box-shadow: 0 1px 4px rgba(30,90,138,.06); }
+  .rel-badge { display: inline-block; background: #eef4f9; color: #1e5a8a; font-size: .8rem; font-weight: 600; padding: .25rem .7rem; border-radius: 20px; margin-bottom: .6rem; }
+  h2 { color: #1e5a8a; margin-top: 0; }
+  h3 { color: #14364f; margin-top: 1.8rem; border-bottom: 1px solid #eee8da; padding-bottom: .3rem; }
+  .meta { color: #6b7a89; font-size: .92rem; margin-bottom: 1rem; }
+  a.src { color: #1e5a8a; font-weight: 600; }
+  .summary { background: #f5f8fb; border-radius: 8px; padding: .9rem 1.1rem; }
+  .money-explainer { font-size: .85rem; color: #6b7a89; background: #f7f4ec; border-radius: 6px; padding: .5rem .8rem; margin-top: 1rem; }
+  table.amounts { width: 100%; border-collapse: collapse; margin: .6rem 0 1rem; }
+  table.amounts th { background: #1e5a8a; color: #fff; padding: .5rem; font-weight: 500; font-size: .88rem; }
+  table.amounts td { text-align: center; padding: .5rem .6rem; border: 1px solid #dde5ec; font-size: .93rem; }
+  td.final { font-weight: 700; color: #1e5a8a; background: #f0f6fa; }
+  td.row-label, td.comp-name { text-align: right; font-weight: 600; color: #14364f; }
+  .owner-note { font-size: .78rem; color: #6b7a89; font-weight: 400; }
+  tr.due-row td { background: #f7f4ec; }
+  .components-note { font-size: .82rem; color: #6b7a89; margin-top: -.5rem; margin-bottom: 1rem; }
+  .plans { font-size: .95rem; color: #3a5166; margin: .6rem 0; }
+  .sugiya { border-right: 4px solid #c9962e; background: #fdfcf8; border-radius: 6px; padding: .7rem 1rem; margin: .8rem 0; }
+  .sugiya-name { font-weight: 700; color: #14364f; margin-bottom: .3rem; }
+  .positions { font-size: .93rem; color: #4a5d70; }
+  .ruling { margin-top: .4rem; padding-top: .4rem; border-top: 1px dashed #e0d9c8; }
+  .side { font-weight: 700; color: #1e5a8a; }
+  .rate-row { margin-top: .4rem; padding-top: .4rem; border-top: 1px dashed #e0d9c8; font-size: .87rem; color: #14364f; }
+  blockquote { background: #eef4f9; border-right: 4px solid #1e5a8a; margin: .8rem 0; padding: .8rem 1.1rem; border-radius: 8px; font-style: italic; }
+  .topic { display: block; font-style: normal; font-weight: 700; font-size: .85rem; color: #1e5a8a; margin-bottom: .3rem; }
+  .plain { font-style: normal; font-size: .82rem; color: #6b7a89; margin-top: .4rem; border-top: 1px dashed #cdd8e0; padding-top: .3rem; }
+  .legal-list { display: flex; flex-direction: column; gap: .4rem; }
+  .legal-item { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; font-size: .9rem; background: #f7f4ec; border-radius: 6px; padding: .4rem .7rem; }
+  .legal-item.legal-unverified { background: #fdf0ee; }
+  .legal-name { font-weight: 600; }
+  .legal-num { color: #1e5a8a; }
+  .legal-flag { color: #8a2f22; font-size: .82rem; }
+  .legal-forum { color: #6b7a89; font-size: .82rem; margin-right: auto; }
+  .legal-caveat { font-size: .82rem; color: #6b7a89; margin-top: .5rem; }
+  .verdict-box { background: #f0f6ef; border: 1px solid #bcd8bb; border-right: 5px solid #2e8b57; border-radius: 8px; padding: .9rem 1.1rem; margin-top: 1.5rem; }
+  .verdict-title { font-weight: 700; color: #2e8b57; margin-bottom: .4rem; }
+  .verdict-list { margin: 0 0 .5rem; padding-right: 1.2rem; font-size: .95rem; }
+  .verdict-caveat { font-size: .82rem; color: #5a6d59; }
+  .qa-box { border-radius: 8px; padding: .8rem 1.1rem; margin-top: 1rem; font-size: .88rem; }
+  .qa-pass { background: #eef8f0; border: 1px solid #bcd8bb; color: #2e6b3e; }
+  .qa-fail { background: #fdf6e7; border: 1px solid #ecd9a8; color: #6b5620; }
+  .qa-fail ul { margin: .5rem 0 0; padding-right: 1.2rem; }
+  .note { background: #fdf6e7; border: 1px solid #ecd9a8; border-radius: 8px; padding: .8rem 1.1rem; font-size: .93rem; }
+  .brand { display: flex; align-items: center; gap: 1rem; margin-bottom: .5rem; }
+  .brand-name { font-size: 1.35rem; font-weight: 700; color: #1e5a8a; }
+  .brand-tag { font-size: .9rem; color: #c9962e; letter-spacing: .04em; }
+  .print-btn { position: fixed; top: 1.2rem; left: 1.2rem; background: #1e5a8a; color: #fff; border: none; border-radius: 8px; padding: .6rem 1.2rem; font-size: 1rem; font-family: inherit; cursor: pointer; box-shadow: 0 2px 8px rgba(20,54,79,.25); }
+  .print-btn:hover { background: #14364f; }
+  .a11y-btn { position: fixed; bottom: 1.2rem; right: 1.2rem; z-index: 999; background: #1e5a8a; color: #fff; border: none; border-radius: 50%; width: 3.2rem; height: 3.2rem; font-size: 1.3rem; font-family: inherit; cursor: pointer; box-shadow: 0 2px 10px rgba(20,54,79,.35); }
+  .a11y-btn:hover { background: #eef4f9; }
+  body.a11y-on { font-size: 1.15em; line-height: 2; }
+  body.a11y-on .print-btn, body.a11y-on .a11y-btn { font-size: 1em; }
+  .scope-note { background: #eef4f9; border: 1px solid #b9cfe0; border-radius: 8px; padding: .8rem 1.1rem; font-size: .88rem; color: #14364f; margin-bottom: 1.5rem; }
+  .cta-box { background: #eef4f9; border: 1px solid #b9cfe0; border-right: 5px solid #1e5a8a; border-radius: 10px; padding: 1rem 1.3rem; margin: 1rem 0 1.5rem; }
+  .cta-title { font-weight: 700; font-size: 1.1rem; color: #14364f; margin-bottom: .4rem; }
+  .deadline { background: #fdf0ee; border-radius: 6px; padding: .5rem .8rem; color: #8a2f22; }
+  .cta-note { font-size: .88rem; color: #3a5166; margin-top: .6rem; }
+  .pay-btn { display: inline-block; background: #1e5a8a; color: #fff; text-decoration: none; font-weight: 700; font-size: 1.05rem; padding: .7rem 1.6rem; border-radius: 8px; margin-top: .3rem; }
+  .pay-btn:hover { background: #14364f; }
+  .q-label { font-size: .88rem; color: #3a5166; }
+  .wa-small { font-size: .85rem; padding: .35rem .8rem; }
+  .contact-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: .7rem; }
+  .wa-btn { display: inline-flex; align-items: center; gap: .5rem; background: #25d366; color: #fff; text-decoration: none; font-weight: 600; padding: .5rem 1rem; border-radius: 24px; font-size: .92rem; }
+  .wa-btn:hover { background: #1eb856; }
+  .mail-link { color: #1e5a8a; font-weight: 600; cursor: pointer; }
+  .tier-note { font-size: .82rem; color: #6b7a89; margin-top: .5rem; }
+  .site-footer { margin-top: 3rem; padding-top: 1rem; border-top: 2px solid #c9962e; text-align: center; font-size: .85rem; color: #4a5d70; line-height: 1.7; }
+  @media print {
+    .print-btn, .a11y-btn { display: none; }
+    body { background: #fff; padding: 0 0 1cm; }
+    section { box-shadow: none; }
+    .verdict-box, .qa-box, .cta-box, table.amounts, .sugiya, blockquote { break-inside: avoid; }
+    h2, h3 { break-after: avoid; }
+    .site-footer { break-before: avoid; margin-top: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">הדפס / שמור כ-PDF</button>
+<button class="a11y-btn" onclick="document.body.classList.toggle('a11y-on')" aria-label="הגדלת טקסט ונגישות" title="נגישות">♿</button>
+<div class="brand">
+  <svg width="64" height="64" viewBox="0 0 150 150" role="img" aria-label="לוגו"><title>לוגו</title>
+    <circle cx="75" cy="75" r="60" fill="none" stroke="#1e5a8a" stroke-width="5.5"/>
+    <circle cx="75" cy="75" r="49" fill="none" stroke="#c9962e" stroke-width="1.8"/>
+    <rect x="53" y="42" width="44" height="58" rx="5" fill="none" stroke="#1e5a8a" stroke-width="3.5"/>
+    <line x1="62" y1="56" x2="88" y2="56" stroke="#1e5a8a" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="62" y1="66" x2="88" y2="66" stroke="#8fa6b8" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="62" y1="76" x2="79" y2="76" stroke="#8fa6b8" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="90" cy="93" r="15" fill="#2e8b57"/>
+    <path d="M83 93 L88 98 L97 87" stroke="#ffffff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div>
+    <div class="brand-name">בדיקת סבירות ראשונית לדרישת היטל השבחה</div>
+    <div class="brand-tag">בודקים לפני שמשלמים</div>
+  </div>
+</div>
+<h1>דוגמת דוח — מבוססת על ניתוח הכרעות שמאים מכריעים</h1>
+<p class="intro">הבדיקה מבוססת על ניתוח אוטומטי של הכרעות שמאים מכריעים ומידע שהוזן על ידי הלקוח. המערכת מאתרת הכרעות שעשויות להיות רלוונטיות לפי הוועדה המקומית, התכניות, סוג הנכס, סוג המימוש והסוגיות שנדונו. התוצאה היא בדיקה ראשונית בלבד, הכפופה לבקרת נתונים ולבדיקה מקצועית של שומת הוועדה.</p>
+<div class="scope-note">
+  זוהי דוגמה להמחשת מבנה הדוח, המבוססת על שלוש הכרעות אמיתיות ממאגר משרד המשפטים. בבדיקה אמיתית המערכת מציגה הכרעות שנבחרו לפי הנתונים שהוזנו על הנכס הספציפי, עם ציון רלוונטיות ונקודות דמיון ושוני מהמקרה שלך. תמחור הבדיקה נקבע לפי היקף ההכרעות בוועדה הרלוונטית: 280 ₪ עד 380 ₪ עד 480 ₪.
+</div>
+<div class="note">הניתוח נערך באופן אוטומטי והמערכת יכולה לטעות. לכל הכרעה מצורף קישור למסמך המקורי במאגר הממשלתי, לבקרה שלך ולשיחה והדיון עם חיים אטקין.
+  <div class="contact-row">
+    <a class="wa-btn" href="https://wa.me/972523728828?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%97%D7%99%D7%99%D7%9D%2C%20%D7%A7%D7%A8%D7%90%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%93%D7%95%D7%92%D7%9E%D7%AA%20%D7%94%D7%93%D7%95%D7%97%20%D7%95%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A9%D7%90%D7%9C%D7%94" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.1 14.3c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.8-4.4-3.9-.1-.2-1.1-1.4-1.1-2.7 0-1.3.7-1.9.9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4.2.5.7 1.8.8 1.9.1.1.1.3 0 .4-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.2.2.1.4.1.5-.1.1-.1.6-.7.7-.9.2-.2.3-.2.5-.1.2.1 1.5.7 1.7.8.2.1.4.2.4.3.1.1.1.7-.1 1.4z"/></svg>
+      וואטסאפ לחיים אטקין
+    </a>
+    <a class="mail-link" dir="ltr" href="mailto:haimetkin@gmail.com" onclick="navigator.clipboard.writeText('haimetkin@gmail.com').then(()=>{const t=this.nextElementSibling;t.style.opacity=1;setTimeout(()=>t.style.opacity=0,2000)})">haimetkin@gmail.com</a><span class="copied" style="opacity:0;transition:opacity .3s;color:#2e8b57;font-size:.85rem;font-weight:600">הכתובת הועתקה ✓</span>
+  </div>
+</div>
+
+  <section>
+    <div class="rel-badge">הכרעה רלוונטית לפי ועדה, תוכניות וסוגיות שמאיות</div>
+    <h2>הגלבוע · גוש 23205 חלקה 8</h2>
+    <div class="meta">שמאי מכריע: גולדברג ארנון · תאריך הכרעה: 2026-07-02 · מגרש עליו מבנה למגורים בן 2 קומות וקומה עליונה חלקית · אירוע מימוש: מכר
+       · <a class="src" href="https://free-justice.openapi.gov.il/free/moj/portal/rest/searchpredefinedapi/v1/SearchPredefinedApi/Documents/DecisiveAppraiser/E+2nYUAgB2cS6xavV3Da1q8NMAN4cdh3yThuXre6sT0=" target="_blank">להכרעה המקורית המלאה (PDF) ↗</a></div>
+    <p class="summary">הכרעה זו עוסקת בשמירת חוות דעת בחלקה 8 בגוש 23205 בכפר טייבה בעמק. סוגיה ראשונה הנדונה הייתה הגדרת שטח המגרש - הוועדה טענה 600 מ"ר ברוטו, בעל הנכס טען 370 מ"ר נטו. השמאי המכריע קבע כי שטח המגרש הוא 370 מ"ר, כאשר הפרש של 230 מ"ר מהווה הפשרה לשטחי ציבור (38.3% - שיעור סביר). בתכנית ג/2552 (1979) קבע השמאי שלא חלה השבחה כיוון שהשטח הנוצל בהיתר עלה על זכויות הבניה המוקנות. בתכנית ג/6670 (1994) קבע השבחה בסך 9,805 ₪ (היטל: 4,903 ₪), בהתבסס על שווי של 90 ₪/מ"ר מבונה וקבלת עמדת הוועדה בנוגע לערכי שווי מהשומות המכריעות בכפר. תכנית ג/12040 לא חלה על הנכס ולכן לא חלה בה השבחה.</p>
+    <div class="plans"><strong>הוגשה שומה נגדית</strong> · הצדדים בהכרעה: מר ריאד פודה מול הועדה המקומית לתכנון ובניה הגלבוע</div>
+    
+    <div class="money-explainer">"השבחה" היא עליית השווי המחושבת. "היטל השבחה" הוא בדרך כלל 50% מסכום ההשבחה, ו"סכום לתשלום" הוא הסכום בפועל אחרי הצמדה, ריבית, חלק יחסי ופטורים. שלושת הנתונים שונים במתכוון.</div>
+    <table class="amounts">
+      <tr><th>נתון</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr><td class="row-label">סכום ההשבחה (עליית השווי שנקבעה)</td><td>32,130 ₪</td><td>500 ₪</td><td class="final">9,805 ₪</td></tr>
+      <tr><td class="row-label">היטל ההשבחה (בדרך כלל מחצית ההשבחה)</td><td>—</td><td>—</td><td class="final">4,903 ₪</td></tr>
+    </table>
+    
+    <h3>רכיבי ההשבחה</h3>
+    <table class="amounts">
+      <tr><th>רכיב</th><th>מועד קובע</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr>
+        <td class="comp-name">תכנית ג/2552</td>
+        <td>09/03/1979</td>
+        <td>—</td>
+        <td>0 ₪<div class="owner-note">אין השבחה</div></td>
+        <td class="final">—</td>
+      </tr><tr>
+        <td class="comp-name">תכנית ג/6670</td>
+        <td>14/01/1994</td>
+        <td>32,130 ₪</td>
+        <td>500 ₪<div class="owner-note">השבחה של 500 ₪</div></td>
+        <td class="final">9,805 ₪</td>
+      </tr>
+    </table>
+    <div class="components-note">כל רכיב נקוב במונחי המועד הקובע שלו — סכומים ממועדים שונים אינם ברי חיבור ישיר.</div>
+    <div class="plans"><strong>תוכניות שנדונו:</strong> תכנית ג/2552 · תכנית ג/6670 · תכנית ג/12040 · תכנית ג/21225</div>
+    <h3>הסוגיות שנדונו</h3>
+    
+    <div class="sugiya">
+      <div class="sugiya-name">הגדרת המגרש הנדון ושטחו</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> שטח המגרש הוא 600 מ</div>
+        <div><span class="side">עמדת הבעלים:</span> שטח המגרש הוא 370 מ</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> קבע השמאי המכריע כי שטח המגרש לחישוב הזכויות הינו 370 מ</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">ערכי שווי למגורים בתכנית ג/6670</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> שווי 140 ₪/מ</div>
+        <div><span class="side">עמדת הבעלים:</span> שווי 18-22 $/מ</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> קבע שווי של 90 ₪/מ</div>
+      
+      <div class="rate-row">שיעור שווי שנוי במחלוקת (₪/מ): ועדה 140 ₪ · בעלים — · הכרעה 90 ₪</div>
+    </div>
+    <h3>ציטוטים מנימוקי השמאי המכריע</h3>
+    
+    <blockquote><span class="topic">השבחה בתכנית ג/2552</span>"השטח אשר נוצל בהיתר נ"ל, גבוה במעט מכלל הזכויות המוקנות בתכנית ג/2552. לאור כך, הרי שלא חלה השבחה בגין אישור התכנית."</blockquote>
+    <blockquote><span class="topic">שטח המגרש</span>"בהינתן שאין מחלוקת כי מגרש 7 מהווה את מושא השומה, ובהינתן כי בתכנית היתר מס' 15-4-90 סומן מגרש 7 בשטח מדוד מוגדר של 370 מ"ר, הרי שניתן להניח כי שטח המגרש התיאורטי שצוין בחוזה המכר, של 600 מ"ר, הינו בבחינת השטח ברוטו"</blockquote>
+    <blockquote><span class="topic">תכנית ג/12040</span>"ע"פ בדיקת מסמכי תכנית ג/ 12040, הרי שהיא לא חלה ביחס למושא השומה. לאור כך הרי שלא חלה השבחה עקב אישור תכנית זו, ביחס למושא השומה."</blockquote>
+    
+    
+    <div class="verdict-box">
+      <div class="verdict-title">מה ניתן ללמוד מהמקרה</div>
+      <ul class="verdict-list"><li>הגדרת המגרש הנדון ושטחו: קבע השמאי המכריע כי שטח המגרש לחישוב הזכויות הינו 370 מ</li><li>ערכי שווי למגורים בתכנית ג/6670: קבע שווי של 90 ₪/מ</li></ul>
+      <div class="verdict-caveat">אין להסיק כי תוצאה דומה תחול בנכס אחר. משקלה של הכרעה תלוי בדמיון העובדתי, התכנוני והשמאי בין המקרים, ובדין שהיה בתוקף במועד הרלוונטי.</div>
+    </div>
+  </section>
+  <section>
+    <div class="rel-badge">הכרעה רלוונטית לפי ועדה, תוכניות וסוגיות שמאיות</div>
+    <h2>הרצליה · גוש 6536 חלקה 557</h2>
+    <div class="meta">שמאי מכריע: בן פורת לילך · תאריך הכרעה: 2026-06-11 · בנין מגורים · אירוע מימוש: היתר בנייה
+       · <a class="src" href="https://free-justice.openapi.gov.il/free/moj/portal/rest/searchpredefinedapi/v1/SearchPredefinedApi/Documents/DecisiveAppraiser/E+2nYUAgB2cS6xavV3Da1l~V0DaUN4SklYb6VQACsrE=" target="_blank">להכרעה המקורית המלאה (PDF) ↗</a></div>
+    <p class="summary">הכרעה בעניין היטל השבחה על נכס בהרצליה בעקבות אישור תוכנית הר/2213 לחיזוק מבנים והקלות בניה. בחנו השמאיות את השבחה בהיקף של כ-1 מיליון ₪ בשני רכיבים עיקריים: (1) השבחה של 522,184 ₪ בגין תוכנית הר/2213, המהווה 20.86% מסך התוספות בגלל חלוקה בין זכויות מתמ"א 38 לזכויות מהתכנית המפורטת; (2) השבחה של 512,719 ₪ בגין הקלות בנייה שונות (קווי בניין, ניוד מחסנים, תכסית גג וחלחול מרתפים). ההיטל הוחל בהתאם לחוק בשיעור 50% מההשבחה החייבת בסכום כולל של 310,834 ₪. השומאית קיבלה את עמדת שמאי המבקשים בחלק גדול מהסוגיות, כולל שווי נכס של 26,300 ₪ למ"ר במצב קודם (כולל פוטנציאל תמ"א), 12,500 ₪ למ"ר מבונה במצב חדש, וקביעה כי מרבית ההקלות משביחות בשיעורים נמוכים מהטענה של הוועדה.</p>
+    <div class="plans"><strong>הוגשה שומה נגדית</strong> · הצדדים בהכרעה: קידר פרוייקטים (ט.י) בע"מ מול הוועדה המקומית לתכנון ובניה הרצליה</div>
+    
+    <div class="money-explainer">"השבחה" היא עליית השווי המחושבת. "היטל השבחה" הוא בדרך כלל 50% מסכום ההשבחה, ו"סכום לתשלום" הוא הסכום בפועל אחרי הצמדה, ריבית, חלק יחסי ופטורים. שלושת הנתונים שונים במתכוון.</div>
+    <table class="amounts">
+      <tr><th>נתון</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr><td class="row-label">סכום ההשבחה (עליית השווי שנקבעה)</td><td>4,622,124 ₪</td><td>187,771 ₪</td><td class="final">1,034,903 ₪</td></tr>
+      <tr><td class="row-label">היטל ההשבחה (בדרך כלל מחצית ההשבחה)</td><td>—</td><td>—</td><td class="final">310,834 ₪</td></tr><tr class="due-row"><td class="row-label">סכום לתשלום בפועל (אחרי הצמדה/ריבית/פטור וכו')</td><td>—</td><td>—</td><td class="final">310,834 ₪</td></tr>
+    </table>
+    
+    <h3>רכיבי ההשבחה</h3>
+    <table class="amounts">
+      <tr><th>רכיב</th><th>מועד קובע</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr>
+        <td class="comp-name">תוכנית הר/2213</td>
+        <td>29/11/2023</td>
+        <td>3,352,300 ₪</td>
+        <td>0 ₪<div class="owner-note">אין השבחה</div></td>
+        <td class="final">522,184 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה בקו בניין קדמי לגזוזטראות</td>
+        <td>29/11/2023</td>
+        <td>117,200 ₪</td>
+        <td>40,168 ₪</td>
+        <td class="final">52,307 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה לניוד שטחי שירות מקומת קרקע לקומות מרתף</td>
+        <td>29/11/2023</td>
+        <td>456,624 ₪</td>
+        <td>0 ₪<div class="owner-note">אין השבחה</div></td>
+        <td class="final">248,165 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה לתכסית קומה חלקית עליונה 65% במקום 50%</td>
+        <td>29/11/2023</td>
+        <td>289,200 ₪</td>
+        <td>14,428 ₪</td>
+        <td class="final">47,822 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה באחוזי חלחול 9.3% במקום 20%</td>
+        <td>29/11/2023</td>
+        <td>318,000 ₪</td>
+        <td>133,175 ₪</td>
+        <td class="final">133,175 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה בגובה מרתף מ-2.2 ל-5 מ'</td>
+        <td>29/11/2023</td>
+        <td>19,100 ₪</td>
+        <td>0 ₪<div class="owner-note">אין השבחה</div></td>
+        <td class="final">0 ₪</td>
+      </tr><tr>
+        <td class="comp-name">הקלה בגובה גדרות בין שכנים</td>
+        <td>29/11/2023</td>
+        <td>70,000 ₪</td>
+        <td>—</td>
+        <td class="final">31,250 ₪</td>
+      </tr>
+    </table>
+    <div class="components-note">כל רכיב נקוב במונחי המועד הקובע שלו — סכומים ממועדים שונים אינם ברי חיבור ישיר.</div>
+    <div class="plans"><strong>תוכניות שנדונו:</strong> תוכנית הר/2213 - תוכנית מפורטת לחיזוק מבנים · תמ"א 38/2 - הריסה ובניה מחדש · תמ"א 38/3 - תוספת קומות</div>
+    <h3>הסוגיות שנדונו</h3>
+    
+    <div class="sugiya">
+      <div class="sugiya-name">שווי מ"ר בנוי במצב קודם</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> 18,400 ₪</div>
+        <div><span class="side">עמדת הבעלים:</span> 30,000 ₪</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> שווי מ"ר בנוי ברוטו במצב קודם כולל פוטנציאל לתמ"א 38 הוא 26,300 ₪</div>
+      
+      <div class="rate-row">שיעור שווי שנוי במחלוקת (₪ למ"ר): ועדה 18,400 ₪ · בעלים 30,000 ₪ · הכרעה 26,300 ₪</div>
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">שווי מ"ר מבונה במצב חדש</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> 14,000 ₪</div>
+        <div><span class="side">עמדת הבעלים:</span> 9,600 ₪</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> שווי מ"ר מבונה במצב חדש הוא 12,500 ₪</div>
+      
+      <div class="rate-row">שיעור שווי שנוי במחלוקת (₪ למ"ר): ועדה 14,000 ₪ · בעלים 9,600 ₪ · הכרעה 12,500 ₪</div>
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">השבחה בגין תוכנית הר/2213</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> מתוך 4.622 מיליון ₪, השבחה של 3.352 מיליון ₪ בגין התוכנית</div>
+        <div><span class="side">עמדת הבעלים:</span> אין השבחה - שווי בנוי במצב קודם גבוה משווי במצב חדש</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> השבחה בהיקף של 522,184 ₪ בחלק היחסי של 20.8645%</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">חלוקת השבחה בין זכויות מתוכנית הר/2213 וזכויות מתמ"א 38</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> חלק היחסי של הר/2213 הוא 21.5446%</div>
+        <div><span class="side">עמדת הבעלים:</span> חלק היחסי של הר/2213 הוא 20.864%</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> בחינת היחסיות לפי שטחים אקוויוולנטיים, חלק היחסי של הר/2213 הוא 20.8645%</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה בקו בניין קדמי</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> השבחה של 117,200 ₪ בגין מרפסות חורגות</div>
+        <div><span class="side">עמדת הבעלים:</span> השבחה של 40,168 ₪ בשיעור אקו' נמוך יותר</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> השבחה של 52,307 ₪ בשטח מרפסות חורגות של 55.794 מ"ר</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה לניוד מחסנים לקומות מרתף</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> השבחה יש מאין של 456,624 ₪</div>
+        <div><span class="side">עמדת הבעלים:</span> אין השבחה - זכות קיימת בקומת קרקע</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> השבחה של 248,165 ₪ בחלק היחסי של 61% לדירות היזם בהתאם לפס"ד כריזמה</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה בתכסית קומה עליונה חלקית</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> השבחה יש מאין של 289,200 ₪</div>
+        <div><span class="side">עמדת הבעלים:</span> שיפור תכנון בשיעור 6% = 14,428 ₪</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> שיפור תכנון בשיעור 15% השבחה של 47,822 ₪</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה באחוזי חלחול מרתף</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> חיסכון בעלויות בניה של 318,000 ₪</div>
+        <div><span class="side">עמדת הבעלים:</span> חיסכון של 133,175 ₪ בלבד</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> השבחה של 133,175 ₪ בשטח חורג של 266.35 מ"ר בהתאם לקביעת שמאים מכריעים</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה בגובה מרתף להעברת מערכות טכניות</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> השבחה של 19,100 ₪ בשל שיפור בשטח מחסנים</div>
+        <div><span class="side">עמדת הבעלים:</span> אין השבחה - העלות העודפת מאינת את ההשבחה</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> אין השבחה - העלות העודפת מאינת את ההשבחה במלואה</div>
+      
+    </div>
+    <div class="sugiya">
+      <div class="sugiya-name">הקלה בגובה גדרות בין שכנים</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> השבחה של 70,000 ₪ בגובה גדר מ-1.5 ל-2 מ'</div>
+        <div><span class="side">עמדת הבעלים:</span> השבחה זניחה</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> השבחה של 31,250 ₪ בשטח חצר אפקטיבית של 200 מ"ר בשיעור 0.05</div>
+      
+    </div>
+    <h3>ציטוטים מנימוקי השמאי המכריע</h3>
+    
+    <blockquote><span class="topic">מרכיב הפוטנציאל במצב הקודם</span>"אין להפחית משווי השוק של המקרקעין את תרומתה של תמ"א 38 לשווים"</blockquote>
+    <blockquote><span class="topic">חישוב ההשבחה</span>"ההשבחה החייבת הינה: S = Z * X/(X+Y) כאשר X הן הזכויות מהתכנון המפורט ו-Y הן הזכויות מתמ"א 38"</blockquote>
+    <blockquote><span class="topic">מחלוקת על שווי מ"ר בנוי</span>"בהתאם לעסקאות השוואה נמצא שווי מ"ר בנוי ברוטו כולל פוטנציאל לתמ"א 38 של 26,300 ₪"</blockquote>
+    <blockquote><span class="topic">הקלה בקו בניין</span>"ההקלה בגין קו בניין קידמי נובעת בשל העובדה כי תוכנית הר/2213 מבטלת את קווי הבניין המקלים לפי תמ"א 38"</blockquote>
+    
+    <h3>אסמכתאות שהוזכרו בהכרעה</h3>
+    <div class="legal-list">
+      
+      <div class="legal-item ">
+        <span class="legal-name">עמ"נ 47521-12-22 קבוצת הירדן בע"מ נ' הוועדה המקומית הרצליה</span>
+        <span class="legal-num">עמ"נ 47521-12-22</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">עמ"נ 54581-12-22 רינובו בע"מ נ' הוועדה המקומית הרצליה</span>
+        <span class="legal-num">עמ"נ 54581-12-22</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">בר"מ 7601/23 הוועדה המקומית לתכנון ובניה הרצליה נ' רינובו בע"מ וקבוצת הירדן בע"מ</span>
+        <span class="legal-num">בר"מ 7601/23</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">בר"מ 1975/24 הוועדה המקומית לתו"ב ת"א נ' לויתן אדיב שמואל</span>
+        <span class="legal-num">בר"מ 1975/24</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">תא/ 85004/0124 לאנה שלי לאור</span>
+        <span class="legal-num">תא/ 85004/0124</span>
+        <span class="legal-forum">ועדת ערר</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">ההש/ 8068/1224 + 8069/1224 הוועדה המקומית לתכנון ובניה הוד השרון נ' אל גג הנדסה ובניה בע"מ</span>
+        <span class="legal-num">ההש/ 8068/1224 + 8069/1224</span>
+        <span class="legal-forum">ועדת ערר</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">בר"מ 1621/18 אטבליסמנט סמונד נגד הוועדה המקומית לתו"ב שרונים</span>
+        <span class="legal-num">בר"מ 1621/18</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">דייניש עמ"נ 19431-04-19</span>
+        <span class="legal-num">עמ"נ 19431-04-19</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">עמ"נ 23304-06-14 יצחק כהן נ' הוועדה המקומית הרצליה</span>
+        <span class="legal-num">עמ"נ 23304-06-14</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">הר/ 82180/0523 + בלמ/הר/ 82025/0623 הוועדה המקומית הרצליה נ' כריזמה בע"מ</span>
+        <span class="legal-num">הר/ 82180/0523 + בלמ/הר/ 82025/0623</span>
+        <span class="legal-forum">ועדת ערר</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">פס"ד כריזמה הר/ 82180/0523 וועדת ערר</span>
+        <span class="legal-num">הר/ 82180/0523</span>
+        <span class="legal-forum">ועדת ערר</span>
+      </div>
+    </div>
+    <div class="legal-caveat">הכרעות שמאים מכריעים אינן מחייבות בהכרח בתיק אחר. משקלן תלוי בדמיון העובדתי, התכנוני והמשפטי בין המקרים.</div>
+    
+    <div class="verdict-box">
+      <div class="verdict-title">מה ניתן ללמוד מהמקרה</div>
+      <ul class="verdict-list"><li>שווי מ"ר בנוי במצב קודם: שווי מ"ר בנוי ברוטו במצב קודם כולל פוטנציאל לתמ"א 38 הוא 26,300 ₪</li><li>שווי מ"ר מבונה במצב חדש: שווי מ"ר מבונה במצב חדש הוא 12,500 ₪</li><li>השבחה בגין תוכנית הר/2213: השבחה בהיקף של 522,184 ₪ בחלק היחסי של 20.8645%</li><li>חלוקת השבחה בין זכויות מתוכנית הר/2213 וזכויות מתמ"א 38: בחינת היחסיות לפי שטחים אקוויוולנטיים, חלק היחסי של הר/2213 הוא 20.8645%</li></ul>
+      <div class="verdict-caveat">אין להסיק כי תוצאה דומה תחול בנכס אחר. משקלה של הכרעה תלוי בדמיון העובדתי, התכנוני והשמאי בין המקרים, ובדין שהיה בתוקף במועד הרלוונטי.</div>
+    </div>
+  </section>
+  <section>
+    <div class="rel-badge">הכרעה רלוונטית לפי ועדה, תוכניות וסוגיות שמאיות</div>
+    <h2>תל אביב-יפו · גוש 6111 חלקה 714</h2>
+    <div class="meta">שמאי מכריע: דדון דוד · תאריך הכרעה: 2026-06-18 · דירת מגורים בקומה רביעית בבניין מגורים · אירוע מימוש: מכר
+       · <a class="src" href="https://free-justice.openapi.gov.il/free/moj/portal/rest/searchpredefinedapi/v1/SearchPredefinedApi/Documents/DecisiveAppraiser/E+2nYUAgB2cS6xavV3Da1g+8t7Nw5ADdm3wCoMWvTM8=" target="_blank">להכרעה המקורית המלאה (PDF) ↗</a></div>
+    <p class="summary">הכרעת השמאי המכריע בסוגיה של השבחה בדירת מגורים בת</p>
+    <div class="plans"><strong>הוגשה שומה נגדית</strong> · הצדדים בהכרעה: איריס אלקבץ רוזן מול ועדה מקומית לתכנון ובניה תל אביב-יפו</div>
+    
+    <div class="money-explainer">"השבחה" היא עליית השווי המחושבת. "היטל השבחה" הוא בדרך כלל 50% מסכום ההשבחה, ו"סכום לתשלום" הוא הסכום בפועל אחרי הצמדה, ריבית, חלק יחסי ופטורים. שלושת הנתונים שונים במתכוון.</div>
+    <table class="amounts">
+      <tr><th>נתון</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr><td class="row-label">סכום ההשבחה (עליית השווי שנקבעה)</td><td>366,257 ₪</td><td>0 ₪</td><td class="final">32,994 ₪</td></tr>
+      <tr><td class="row-label">היטל ההשבחה (בדרך כלל מחצית ההשבחה)</td><td>—</td><td>—</td><td class="final">16,497 ₪</td></tr><tr class="due-row"><td class="row-label">סכום לתשלום בפועל (אחרי הצמדה/ריבית/פטור וכו')</td><td>—</td><td>—</td><td class="final">16,497 ₪</td></tr>
+    </table>
+    
+    <h3>רכיבי ההשבחה</h3>
+    <table class="amounts">
+      <tr><th>רכיב</th><th>מועד קובע</th><th>שומת הוועדה</th><th>שומת הבעלים</th><th>ההכרעה</th></tr>
+      <tr>
+        <td class="comp-name">תכנית תא/3729 א' (רובע 4)</td>
+        <td>17.06.2018</td>
+        <td>366,257 ₪</td>
+        <td>0 ₪<div class="owner-note">אין השבחה</div></td>
+        <td class="final">32,994 ₪</td>
+      </tr>
+    </table>
+    <div class="components-note">כל רכיב נקוב במונחי המועד הקובע שלו — סכומים ממועדים שונים אינם ברי חיבור ישיר.</div>
+    <div class="plans"><strong>תוכניות שנדונו:</strong> תכנית G · תכנית 879 · תכנית תא/1680 · תכנית ם · תכנית ע · תכנית תא/2710 · תכנית ח · תכנית ע-1 · תמ"א 38 על תיקוניה · תכנית תא/3440 · תמ"א 38 תיקון 1א' · תמ"א 38 תיקון 2 · תמ"א 38 תיקון 3 · תמ"א 38 תיקון 3א' · תכנית תא/5000 · תכנית תא/3729 א' (רובע 4)</div>
+    <h3>הסוגיות שנדונו</h3>
+    
+    <div class="sugiya">
+      <div class="sugiya-name">התחשבות בזכויות תמ</div>
+      <div class="positions">
+        <div><span class="side">עמדת הוועדה:</span> יש להביא בחשבון זכויות תמ</div>
+        <div><span class="side">עמדת הבעלים:</span> אין השבחה כלל משום שזכויות תמ</div>
+      </div>
+      <div class="ruling"><span class="side">ההכרעה:</span> בהלכה החדשה של בית המשפט העליון (לויתן) יש להביא בחשבון זכויות תמ</div>
+      
+    </div>
+    <h3>ציטוטים מנימוקי השמאי המכריע</h3>
+    
+    <blockquote><span class="topic">הלכה על תמ"א 38 במצב קודם</span>"סבורני כי בעת שומת המצב הקודם של המקרקעין לצורך גביית היטל השבחה אין מקום להפחית משווי השוק של המקרקעין את תרומתה של תמ"א 38 לשוויים"</blockquote>
+    <blockquote><span class="topic">יתרון קרקע מבונה בקומת גג</span>"מקדם תועלת בשיעור של 120% לשטח הבנוי המגלם את הייחודיות המתבטאת בקומה זו"</blockquote>
+    <blockquote><span class="topic">מרפסת גג</span>"מקדם בשיעור של 30% לשטח המרפסת הנותרת בקומת הגג החלקית"</blockquote>
+    <blockquote><span class="topic">תשלום קרן חניה</span>"יש להתחשב בעת עריכת שומת ההשבחה בהוצאות לשם מימוש החובה להתקנת מקומות חניה או תשלום לקרן החניה"</blockquote>
+    
+    <h3>אסמכתאות שהוזכרו בהכרעה</h3>
+    <div class="legal-list">
+      
+      <div class="legal-item ">
+        <span class="legal-name">פסק דין לויתן</span>
+        <span class="legal-num">בר"מ 1975/24, בר"מ 25226-04-25</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">פסק דין בורשטיין</span>
+        <span class="legal-num">בר"מ 7255/17</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+      <div class="legal-item ">
+        <span class="legal-name">ערר בנושא תא/3616א'</span>
+        <span class="legal-num">עמ"נ 18618-12-22</span>
+        <span class="legal-forum">בית משפט מחוזי</span>
+      </div>
+    </div>
+    <div class="legal-caveat">הכרעות שמאים מכריעים אינן מחייבות בהכרח בתיק אחר. משקלן תלוי בדמיון העובדתי, התכנוני והמשפטי בין המקרים.</div>
+    
+    <div class="verdict-box">
+      <div class="verdict-title">מה ניתן ללמוד מהמקרה</div>
+      <ul class="verdict-list"><li>התחשבות בזכויות תמ: בהלכה החדשה של בית המשפט העליון (לויתן) יש להביא בחשבון זכויות תמ</li></ul>
+      <div class="verdict-caveat">אין להסיק כי תוצאה דומה תחול בנכס אחר. משקלה של הכרעה תלוי בדמיון העובדתי, התכנוני והשמאי בין המקרים, ובדין שהיה בתוקף במועד הרלוונטי.</div>
+    </div>
+  </section>
+<div class="cta-box">
+  <div class="cta-title">השלב הבא: עיקרי דברים ביד, לדיון מול השמאי המכריע</div>
+  <p>הבדיקה הראשונית מציגה את תמונת ההכרעות הרלוונטיות. השלב הבא: ניתוח ממוקד של שומת הוועדה שלך והכנת מסמך עיקרי דברים מלא, כולל שיחת ייעוץ בווידאו עם חיים אטקין על המסמך, ללא תוספת מחיר. מי שממשיך מקבל קיזוז מלא של סכום הבדיקה הראשונית ששולם.</p>
+  <p class="deadline">שים לב: לרשותך <strong>45 יום בלבד</strong> ממועד קבלת השומה לפנות למסלול השמאי המכריע (נכון למועד פרסום דף זה — ראה מקור רשמי ותאריך עדכון; ייתכנו מחלוקות על מהו "מועד הקבלה"). אל תמתין לסוף התקופה.</p>
+  <a class="pay-btn" href="#" onclick="alert('בגרסה החיה: מעבר לדף תשלום ולהעלאת מכתב הדרישה ושומת הוועדה'); return false;">להמשך הבדיקה: תשלום והעלאת שומת הוועדה</a>
+  <div class="cta-note">לאחר התשלום תתבקש להעלות שני מסמכים: מכתב הדרישה לתשלום מהוועדה המקומית וחוות הדעת של שמאי הוועדה. בדיקה מלאה עשויה גם לכלול המשך ליווי פרטני אצל חיים אטקין: שומה נגדית, ליווי מול שמאי מכריע, ערר, או חוות דעת — במחיר נפרד, לפי הנדרש.</div>
+  <div class="contact-row">
+    <span class="q-label">יש שאלה לפני שממשיכים?</span>
+    <a class="wa-btn wa-small" href="https://wa.me/972523728828?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%97%D7%99%D7%99%D7%9D%2C%20%D7%A7%D7%99%D7%91%D7%9C%D7%AA%D7%99%20%D7%90%D7%AA%20%D7%93%D7%95%D7%97%20%D7%94%D7%91%D7%93%D7%99%D7%A7%D7%94%20%D7%94%D7%9E%D7%A7%D7%93%D7%99%D7%9E%D7%94%20%D7%95%D7%99%D7%A9%20%D7%9C%D7%99%20%D7%A9%D7%90%D7%9C%D7%94%20%D7%9C%D7%A4%D7%A0%D7%99%20%D7%A9%D7%90%D7%A0%D7%99%20%D7%9E%D7%9E%D7%A9%D7%99%D7%9A%20%D7%9C%D7%A9%D7%9C%D7%91%20%D7%94%D7%91%D7%90" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.1 14.3c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.5-.5-2.6-1.1-4.3-3.8-4.4-3.9-.1-.2-1.1-1.4-1.1-2.7 0-1.3.7-1.9.9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4.2.5.7 1.8.8 1.9.1.1.1.3 0 .4-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.5.1.3.6 1 1.3 1.6.9.8 1.6 1 1.9 1.2.2.1.4.1.5-.1.1-.1.6-.7.7-.9.2-.2.3-.2.5-.1.2.1 1.5.7 1.7.8.2.1.4.2.4.3.1.1.1.7-.1 1.4z"/></svg>
+      וואטסאפ לחיים אטקין
+    </a>
+  </div>
+</div>
+<footer class="site-footer">
+  <div>©חיים אטקין, שמאי מקרקעין, אנליסט נדל״ן, מומחה לנדל״ן וחוקר שוק · מייסד ובעלים של <span style="unicode-bidi:isolate">™בית שמאי®</span>, בית הספר לפרקטיקה שמאית</div>
+  <div>© 2026 חיים אטקין · כל הזכויות שמורות · ט.ל.ח</div>
+</footer>
+</body>
+</html>

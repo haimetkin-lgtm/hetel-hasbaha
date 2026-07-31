@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fafaf7;
+  --foreground: #1a2733;
+  --muted: #6b7a89;
+  --border: #e2ddd2;
+  --brand: #1e5a8a;
+  --brand-dark: #14364f;
+  --gold: #c9962e;
+  --danger: #8a2f22;
+  --success: #2e8b57;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  direction: rtl;
+}
+
+@media print {
+  header, nav, .print\:hidden { display: none !important; }
+  body { background: white; }
+  main { padding: 0 !important; }
+}
