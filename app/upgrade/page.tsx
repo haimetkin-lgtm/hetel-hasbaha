@@ -70,7 +70,8 @@ function UpgradeContent() {
       </h1>
       <p className="text-gray-600 text-sm leading-relaxed mb-4">
         מעלים את מכתב הדרישה מהוועדה ואת שומת הוועדה, והמערכת מכינה עבורכם מסמך עיקרי טיעון
-        מבוסס על ההכרעות הרלוונטיות שנמצאו, כולל הצעה לשיחת ייעוץ עם חיים אטקין.
+        מבוסס על ההכרעות הרלוונטיות שנמצאו. התשלום כולל גם שיחת ייעוץ מקוונת עם חיים אטקין
+        על המסמך, ללא תוספת מחיר.
       </p>
       {caseRow?.committee_name && (
         <div className="bg-[#eef4f9] rounded-lg px-3 py-2 text-sm text-[#14364f] mb-4">
