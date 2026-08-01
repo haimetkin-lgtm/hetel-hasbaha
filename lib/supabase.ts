@@ -40,6 +40,24 @@ export interface CaseRow {
   cardcom_deal_id: string | null;
 }
 
+export interface Stage2CaseRow {
+  id: string;
+  created_at: string;
+  stage1_case_id: string | null;
+  committee_name: string;
+  contact_name: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  price_nis: number;
+  paid: boolean;
+  status: "pending_payment" | "pending_upload" | "uploaded" | "analyzing" | "pending_admin_review" | "ready" | "sent";
+  letter_file_path: string | null;
+  assessment_file_path: string | null;
+  argument_document: string | null;
+}
+
+export const STAGE2_PRICE_NIS = 1400;
+
 export const PRICE_TIERS: Record<1 | 2 | 3, number> = {
   1: 280,
   2: 380,

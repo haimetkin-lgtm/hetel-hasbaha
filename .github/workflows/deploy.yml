@@ -36,6 +36,7 @@ jobs:
           NEXT_PUBLIC_CARDCOM_LINK_TIER1: ${{ secrets.NEXT_PUBLIC_CARDCOM_LINK_TIER1 }}
           NEXT_PUBLIC_CARDCOM_LINK_TIER2: ${{ secrets.NEXT_PUBLIC_CARDCOM_LINK_TIER2 }}
           NEXT_PUBLIC_CARDCOM_LINK_TIER3: ${{ secrets.NEXT_PUBLIC_CARDCOM_LINK_TIER3 }}
+          NEXT_PUBLIC_CARDCOM_LINK_STAGE2: ${{ secrets.NEXT_PUBLIC_CARDCOM_LINK_STAGE2 }}
         run: npm run build
 
       - uses: actions/configure-pages@v4
