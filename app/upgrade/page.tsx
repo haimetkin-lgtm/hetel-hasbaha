@@ -89,6 +89,13 @@ function UpgradeContent() {
       >
         {submitting ? "מעביר לתשלום..." : `המשך לתשלום · ${STAGE2_PRICE_NIS.toLocaleString("he-IL")} ₪`}
       </button>
+      <a
+        href="/hetel-hasbaha/sample-argument.html"
+        target="_blank"
+        className="block text-center mt-3 text-sm text-[#1e5a8a] underline"
+      >
+        צפה בדוגמת מסמך עיקרי דברים
+      </a>
       <div className="mt-6 text-center">
         <a
           href={`https://wa.me/972523728828?text=${encodeURIComponent("שלום חיים, יש לי שאלה לפני שאני ממשיך לשלב הבא")}`}
