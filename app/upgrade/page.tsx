@@ -82,20 +82,22 @@ function UpgradeContent() {
         <p className="text-sm text-[#8a2f22] mb-4">התשלום לא הושלם. אפשר לנסות שוב.</p>
       )}
       {error && <p className="text-sm text-[#8a2f22] mb-4">{error}</p>}
-      <button
-        onClick={handlePay}
-        disabled={submitting}
-        className="w-full bg-[#1e5a8a] text-white font-bold py-3 rounded-lg hover:bg-[#14364f] disabled:opacity-50 cursor-pointer disabled:cursor-default"
-      >
-        {submitting ? "מעביר לתשלום..." : `המשך לתשלום · ${STAGE2_PRICE_NIS.toLocaleString("he-IL")} ₪`}
-      </button>
-      <a
-        href="/hetel-hasbaha/sample-argument.html"
-        target="_blank"
-        className="block text-center mt-3 text-sm text-[#1e5a8a] underline"
-      >
-        צפה בדוגמת מסמך עיקרי דברים
-      </a>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <button
+          onClick={handlePay}
+          disabled={submitting}
+          className="flex-1 bg-[#1e5a8a] text-white font-bold py-3 rounded-lg hover:bg-[#14364f] disabled:opacity-50 cursor-pointer disabled:cursor-default"
+        >
+          {submitting ? "מעביר לתשלום..." : `המשך לתשלום · ${STAGE2_PRICE_NIS.toLocaleString("he-IL")} ₪`}
+        </button>
+        <a
+          href="/hetel-hasbaha/sample-argument.html"
+          target="_blank"
+          className="flex-1 inline-flex items-center justify-center border-2 border-[#1e5a8a] text-[#1e5a8a] hover:bg-[#eef4f9] font-bold py-3 rounded-lg transition-colors text-center"
+        >
+          צפה בדוגמת מסמך עיקרי דברים
+        </a>
+      </div>
       <div className="mt-6 text-center">
         <a
           href={`https://wa.me/972523728828?text=${encodeURIComponent("שלום חיים, יש לי שאלה לפני שאני ממשיך לשלב הבא")}`}
