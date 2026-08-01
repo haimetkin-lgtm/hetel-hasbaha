@@ -86,12 +86,12 @@ export default function Home() {
           </a>
         </div>
         <p className="text-xs text-gray-400 mt-2">המחיר נקבע לפי היקף ההכרעות בוועדה שלך, ומוצג לפני התשלום</p>
-        <p className="text-xs text-gray-400 mt-3">
-          כבר יש לכם שומת ועדה ביד?{" "}
-          <a href="/hetel-hasbaha/upgrade/" className="text-[#1e5a8a] underline">
-            דלגו ישר לבדיקה המלאה, 1,400 ₪
-          </a>
-        </p>
+        <a
+          href="/hetel-hasbaha/upgrade/"
+          className="block mt-4 bg-[#eef4f9] border border-[#b9cfe0] rounded-xl px-5 py-3 text-sm text-[#14364f] hover:bg-[#e2edf5] transition-colors max-w-md mx-auto"
+        >
+          כבר יש לכם שומת ועדה ביד? <strong>רוצים לדלג ישר לבדיקה המלאה?</strong>
+        </a>
       </section>
 
       <section className="grid sm:grid-cols-3 gap-4 mb-10">
