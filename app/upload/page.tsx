@@ -4,6 +4,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, supabaseConfigured, Stage2CaseRow } from "@/lib/supabase";
 
+const ANALYZE_STAGE2_URL = "https://insure.co.il/api/machria/analyze-stage2";
+
 function UploadContent() {
   const params = useSearchParams();
   const case2Id = params.get("case2");
@@ -75,6 +77,11 @@ function UploadContent() {
       if (updateError) throw updateError;
 
       setDone(true);
+      fetch(ANALYZE_STAGE2_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ case2_id: case2Id }),
+      }).catch(() => {});
     } catch {
       setError("אירעה שגיאה בהעלאה. נסו שוב, או צרו קשר בוואטסאפ.");
     }
