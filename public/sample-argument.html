@@ -21,9 +21,13 @@
   .brand-tag { font-size: .85rem; color: #c9962e; letter-spacing: .04em; }
   .cta-box { background: #eef4f9; border: 1px solid #b9cfe0; border-right: 5px solid #1e5a8a; border-radius: 10px; padding: 1rem 1.3rem; margin: 1.5rem 0 0; }
   .wa-btn { display: inline-flex; align-items: center; gap: .5rem; background: #25d366; color: #fff; text-decoration: none; font-weight: 600; padding: .5rem 1rem; border-radius: 24px; font-size: .92rem; }
+  .print-btn { position: fixed; top: 1.2rem; left: 1.2rem; background: #1e5a8a; color: #fff; border: none; border-radius: 8px; padding: .6rem 1.2rem; font-size: 1rem; font-family: inherit; cursor: pointer; box-shadow: 0 2px 8px rgba(20,54,79,.25); }
+  .print-btn:hover { background: #14364f; }
+  @media print { .print-btn { display: none; } body { background: #fff; padding: 0 0 1cm; } }
 </style>
 </head>
 <body>
+<button class="print-btn" onclick="window.print()">הדפס / שמור כ-PDF</button>
 <div class="brand">
   <svg width="48" height="48" viewBox="0 0 150 150" role="img" aria-label="לוגו"><title>לוגו</title>
     <circle cx="75" cy="75" r="60" fill="none" stroke="#1e5a8a" stroke-width="5.5"/>
