@@ -36,7 +36,7 @@ function UploadContent() {
       });
   }, [case2Id]);
 
-  // חוזרים מקארדקום עם תשלום מוצלח — מסמנים paid ברגע שהתיק נטען
+  // חוזרים מקארדקום עם תשלום מוצלח, מסמנים paid ברגע שהתיק נטען
   useEffect(() => {
     if (!case2Id || !caseRow || caseRow.paid) return;
     if (markedPaidRef.current === case2Id) return;
