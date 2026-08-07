@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, supabaseConfigured, CaseRow } from "@/lib/supabase";
+import FeeCalculator from "@/components/FeeCalculator";
 
 const GENERATE_REPORT_URL = "https://insure.co.il/api/machria/generate-report";
 
@@ -99,7 +100,8 @@ function ReportContent() {
 
 export default function ReportPage() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-10">
+    <main className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+      <FeeCalculator />
       <Suspense fallback={<p className="text-gray-500">טוען...</p>}>
         <ReportContent />
       </Suspense>

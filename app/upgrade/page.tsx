@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, supabaseConfigured, CaseRow, STAGE2_PRICE_NIS } from "@/lib/supabase";
+import FeeCalculator from "@/components/FeeCalculator";
 
 const CARDCOM_STAGE2_LINK = process.env.NEXT_PUBLIC_CARDCOM_LINK_STAGE2;
 const SITE_URL = "https://haimetkin-lgtm.github.io/hetel-hasbaha";
@@ -113,10 +114,11 @@ function UpgradeContent() {
 
 export default function UpgradePage() {
   return (
-    <main className="max-w-lg mx-auto px-4 py-10">
+    <main className="max-w-lg mx-auto px-4 py-10 space-y-6">
       <Suspense fallback={<p className="text-gray-500">טוען...</p>}>
         <UpgradeContent />
       </Suspense>
+      <FeeCalculator />
     </main>
   );
 }
