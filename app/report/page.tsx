@@ -2,9 +2,9 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase, supabaseConfigured, CaseRow } from "@/lib/supabase";
+import { getCase, supabaseConfigured, CaseRow } from "@/lib/supabase";
 
-const GENERATE_REPORT_URL = "https://insure.co.il/api/machria/generate-report";
+const GENERATE_REPORT_URL = "https://www.insure.co.il/api/machria/generate-report";
 
 function ReportContent() {
   const params = useSearchParams();
@@ -14,10 +14,10 @@ function ReportContent() {
 
   const loadCase = async () => {
     if (!caseId) return;
-    const { data, error } = await supabase.from("machria_cases").select("*").eq("id", caseId).single();
-    if (error || !data) setLoadState("not_found");
+    const data = await getCase(caseId);
+    if (!data) setLoadState("not_found");
     else {
-      setCaseRow(data as CaseRow);
+      setCaseRow(data);
       setLoadState("ok");
     }
   };
@@ -38,11 +38,24 @@ function ReportContent() {
     if (caseRow.status !== "pending_payment") return;
     if (triggeredRef.current === caseId) return;
     triggeredRef.current = caseId;
-    fetch(GENERATE_REPORT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ case_id: caseId }),
-    }).finally(loadCase);
+    (async () => {
+      // אישור התשלום מגיע מקארדקום ישירות לשרת שלנו, ולפעמים כמה שניות אחרי שהלקוח חוזר לאתר.
+      // עד שהתשלום מאושר השרת עונה 402, ואז מנסים שוב.
+      for (let attempt = 0; attempt < 40; attempt++) {
+        try {
+          const res = await fetch(GENERATE_REPORT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ case_id: caseId }),
+          });
+          if (res.status !== 402) break;
+        } catch {
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 3000));
+      }
+      loadCase();
+    })();
   }, [caseId, caseRow]);
 
   // בזמן שהוועדה עדיין מסווגת, בודקים שוב כל חצי דקה
@@ -78,7 +91,9 @@ function ReportContent() {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm text-center">
       <div className="text-4xl mb-3">✓</div>
-      <h2 className="text-lg font-bold text-[#14364f] mb-2">התשלום התקבל, תודה!</h2>
+      <h2 className="text-lg font-bold text-[#14364f] mb-2">
+        {caseRow?.paid ? "התשלום התקבל, תודה!" : "מאמתים את התשלום מול חברת האשראי..."}
+      </h2>
       <p className="text-gray-600 text-sm mb-4">
         ועדה: <strong>{caseRow?.committee_name}</strong>
       </p>

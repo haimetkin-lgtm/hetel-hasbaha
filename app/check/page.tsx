@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { supabase, supabaseConfigured, PRICE_TIERS, tierForDecisionsCount } from "@/lib/supabase";
-
-const CARDCOM_LINKS: Record<1 | 2 | 3, string | undefined> = {
-  1: process.env.NEXT_PUBLIC_CARDCOM_LINK_TIER1,
-  2: process.env.NEXT_PUBLIC_CARDCOM_LINK_TIER2,
-  3: process.env.NEXT_PUBLIC_CARDCOM_LINK_TIER3,
-};
+import { supabase, supabaseConfigured, PRICE_TIERS, tierForDecisionsCount, startCheckout } from "@/lib/supabase";
 
 type Lookup =
   | { state: "idle" }
@@ -65,18 +59,16 @@ export default function CheckPage() {
       setError("נא להזין טלפון או אימייל לקבלת הדוח");
       return;
     }
-    const cardcomUrl = CARDCOM_LINKS[lookup.tier];
-    if (!cardcomUrl) {
-      setError("התשלום המקוון עדיין לא מוגדר לשלב מחיר זה. אנא צרו קשר בוואטסאפ.");
-      return;
-    }
-
     setSubmitting(true);
     setError(null);
     try {
-      const { data, error: insertError } = await supabase
+      // המזהה נוצר כאן כדי שלא נצטרך לקרוא את השורה בחזרה (קריאה ישירה לטבלה סגורה לציבור).
+      // המחיר האמיתי נקבע בשרת בעת יצירת דף התשלום, הערך כאן נשמר רק לתיעוד.
+      const caseId = crypto.randomUUID();
+      const { error: insertError } = await supabase
         .from("machria_cases")
         .insert({
+          id: caseId,
           committee_name: lookup.committee,
           address: address || null,
           block: block.trim(),
@@ -88,17 +80,11 @@ export default function CheckPage() {
           price_nis: PRICE_TIERS[lookup.tier],
           paid: false,
           status: "pending_payment",
-        })
-        .select("id")
-        .single();
+        });
 
-      if (insertError || !data) throw insertError ?? new Error("insert failed");
+      if (insertError) throw insertError;
 
-      const siteUrl = "https://haimetkin-lgtm.github.io/hetel-hasbaha";
-      const url = new URL(cardcomUrl);
-      url.searchParams.set("SuccessRedirectUrl", `${siteUrl}/report/?case=${data.id}`);
-      url.searchParams.set("FailedRedirectUrl", `${siteUrl}/check/?payment=failed`);
-      window.location.href = url.toString();
+      window.location.href = await startCheckout("stage1", caseId);
     } catch {
       setError("אירעה שגיאה. נסו שוב, או צרו קשר בוואטסאפ.");
       setSubmitting(false);

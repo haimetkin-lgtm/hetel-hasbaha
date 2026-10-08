@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase, supabaseConfigured, Stage2CaseRow } from "@/lib/supabase";
+import { supabaseConfigured, Stage2CaseRow, getStage2Case } from "@/lib/supabase";
 
 function ArgumentContent() {
   const params = useSearchParams();
@@ -12,18 +12,13 @@ function ArgumentContent() {
 
   const loadCase = () => {
     if (!case2Id) return;
-    supabase
-      .from("machria_stage2_cases")
-      .select("*")
-      .eq("id", case2Id)
-      .single()
-      .then(({ data, error }) => {
-        if (error || !data) setLoadState("not_found");
-        else {
-          setCaseRow(data as Stage2CaseRow);
-          setLoadState("ok");
-        }
-      });
+    getStage2Case(case2Id).then((data) => {
+      if (!data) setLoadState("not_found");
+      else {
+        setCaseRow(data);
+        setLoadState("ok");
+      }
+    });
   };
 
   useEffect(() => {

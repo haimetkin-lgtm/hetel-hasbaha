@@ -1,10 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase, supabaseConfigured, Stage2CaseRow } from "@/lib/supabase";
+import { supabase, supabaseConfigured, Stage2CaseRow, getStage2Case } from "@/lib/supabase";
 
-const ANALYZE_STAGE2_URL = "https://insure.co.il/api/machria/analyze-stage2";
+const ANALYZE_STAGE2_URL = "https://www.insure.co.il/api/machria/analyze-stage2";
 
 function UploadContent() {
   const params = useSearchParams();
@@ -17,35 +17,26 @@ function UploadContent() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  const markedPaidRef = useRef<string | null>(null);
-
   useEffect(() => {
     if (!case2Id || !supabaseConfigured) return;
-    supabase
-      .from("machria_stage2_cases")
-      .select("*")
-      .eq("id", case2Id)
-      .single()
-      .then(({ data, error: err }) => {
-        if (err || !data) {
-          setLoadState("not_found");
-          return;
-        }
-        setCaseRow(data as Stage2CaseRow);
-        setLoadState("ok");
-      });
+    getStage2Case(case2Id).then((data) => {
+      if (!data) {
+        setLoadState("not_found");
+        return;
+      }
+      setCaseRow(data);
+      setLoadState("ok");
+    });
   }, [case2Id]);
 
-  // חוזרים מקארדקום עם תשלום מוצלח, מסמנים paid ברגע שהתיק נטען
+  // התשלום מסומן רק על ידי השרת, אחרי אישור מקארדקום. עד אז הדף מחכה ובודק כל כמה שניות.
   useEffect(() => {
     if (!case2Id || !caseRow || caseRow.paid) return;
-    if (markedPaidRef.current === case2Id) return;
-    markedPaidRef.current = case2Id;
-    supabase
-      .from("machria_stage2_cases")
-      .update({ paid: true, status: "pending_upload" })
-      .eq("id", case2Id)
-      .then(() => setCaseRow((prev) => (prev ? { ...prev, paid: true, status: "pending_upload" } : prev)));
+    const interval = setInterval(async () => {
+      const fresh = await getStage2Case(case2Id);
+      if (fresh) setCaseRow(fresh);
+    }, 3000);
+    return () => clearInterval(interval);
   }, [case2Id, caseRow]);
 
   async function handleUpload() {
@@ -66,15 +57,12 @@ function UploadContent() {
       if (letterUp.error) throw letterUp.error;
       if (assessmentUp.error) throw assessmentUp.error;
 
-      const { error: updateError } = await supabase
-        .from("machria_stage2_cases")
-        .update({
-          letter_file_path: letterPath,
-          assessment_file_path: assessmentPath,
-          status: "uploaded",
-        })
-        .eq("id", case2Id);
-      if (updateError) throw updateError;
+      const { data: registered, error: updateError } = await supabase.rpc("machria_register_stage2_upload", {
+        p_id: case2Id,
+        p_letter: letterPath,
+        p_assessment: assessmentPath,
+      });
+      if (updateError || !registered) throw updateError ?? new Error("upload not registered");
 
       setDone(true);
       fetch(ANALYZE_STAGE2_URL, {
@@ -95,6 +83,17 @@ function UploadContent() {
       <p className="text-[#8a2f22]">
         לא הצלחנו לאתר את התיק. אם ביצעתם תשלום, פנו אלינו בוואטסאפ, התשלום בוודאי התקבל.
       </p>
+    );
+  }
+
+  if (caseRow && !caseRow.paid) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm text-center">
+        <h2 className="text-lg font-bold text-[#14364f] mb-2">מאמתים את התשלום מול חברת האשראי...</h2>
+        <p className="text-gray-600 text-sm">
+          אישור התשלום מגיע בדרך כלל תוך שניות והדף יתעדכן אוטומטית. אם זה נמשך יותר מכמה דקות, פנו אלינו בוואטסאפ.
+        </p>
+      </div>
     );
   }
 

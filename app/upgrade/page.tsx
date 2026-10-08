@@ -2,11 +2,9 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { supabase, supabaseConfigured, CaseRow, STAGE2_PRICE_NIS } from "@/lib/supabase";
+import { supabase, supabaseConfigured, CaseRow, STAGE2_PRICE_NIS, getCase, startCheckout } from "@/lib/supabase";
 import FeeCalculator from "@/components/FeeCalculator";
 
-const CARDCOM_STAGE2_LINK = process.env.NEXT_PUBLIC_CARDCOM_LINK_STAGE2;
-const SITE_URL = "https://haimetkin-lgtm.github.io/hetel-hasbaha";
 
 function UpgradeContent() {
   const params = useSearchParams();
@@ -18,12 +16,7 @@ function UpgradeContent() {
 
   useEffect(() => {
     if (!caseId || !supabaseConfigured) return;
-    supabase
-      .from("machria_cases")
-      .select("*")
-      .eq("id", caseId)
-      .single()
-      .then(({ data }) => setCaseRow((data as CaseRow) || null));
+    getCase(caseId).then((data) => setCaseRow(data));
   }, [caseId]);
 
   async function handlePay() {
@@ -31,16 +24,15 @@ function UpgradeContent() {
       setError("המערכת עדיין לא מחוברת. נסו שוב מאוחר יותר.");
       return;
     }
-    if (!CARDCOM_STAGE2_LINK) {
-      setError("התשלום עדיין לא מוגדר. אנא צרו קשר בוואטסאפ.");
-      return;
-    }
     setSubmitting(true);
     setError(null);
     try {
-      const { data, error: insertError } = await supabase
+      // המזהה נוצר כאן כדי שלא נצטרך לקרוא את השורה בחזרה. המחיר האמיתי נקבע בשרת בעת יצירת דף התשלום.
+      const stage2Id = crypto.randomUUID();
+      const { error: insertError } = await supabase
         .from("machria_stage2_cases")
         .insert({
+          id: stage2Id,
           stage1_case_id: caseId || null,
           committee_name: caseRow?.committee_name || "",
           contact_name: caseRow?.contact_name || null,
@@ -49,15 +41,10 @@ function UpgradeContent() {
           price_nis: STAGE2_PRICE_NIS,
           paid: false,
           status: "pending_payment",
-        })
-        .select("id")
-        .single();
-      if (insertError || !data) throw insertError ?? new Error("insert failed");
+        });
+      if (insertError) throw insertError;
 
-      const url = new URL(CARDCOM_STAGE2_LINK);
-      url.searchParams.set("SuccessRedirectUrl", `${SITE_URL}/upload/?case2=${data.id}`);
-      url.searchParams.set("FailedRedirectUrl", `${SITE_URL}/upgrade/?case=${caseId || ""}&payment=failed`);
-      window.location.href = url.toString();
+      window.location.href = await startCheckout("stage2", stage2Id);
     } catch {
       setError("אירעה שגיאה. נסו שוב, או צרו קשר בוואטסאפ.");
       setSubmitting(false);
