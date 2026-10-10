@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import SubscriberLinks from "@/components/SubscriberLinks";
 
 const SITE_ORIGIN = "https://haimetkin-lgtm.github.io";
 const SITE_URL = `${SITE_ORIGIN}/hetel-hasbaha`;
@@ -62,7 +63,7 @@ function BrandLogo() {
       </svg>
       <div className="flex flex-col leading-tight">
         <span className="text-sm font-bold tracking-tight text-gray-900">בדיקת היטל השבחה</span>
-        <span className="text-xs text-amber-600">בודקים לפני שמשלמים</span>
+        <span className="hidden sm:block text-xs text-amber-600">בודקים לפני שמשלמים</span>
       </div>
     </div>
   );
@@ -75,8 +76,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
           <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
             <a href="/hetel-hasbaha/"><BrandLogo /></a>
-            <nav className="flex items-center gap-4 text-xs text-gray-500">
-              <a href="mailto:haimetkin@gmail.com" className="hover:text-gray-800 transition-colors">צור קשר</a>
+            <nav className="flex items-center gap-3 text-xs text-gray-500 whitespace-nowrap">
+              <SubscriberLinks variant="header" />
+              <a href="mailto:haimetkin@gmail.com" className="hidden sm:inline hover:text-gray-800 transition-colors">צור קשר</a>
             </nav>
           </div>
         </header>

@@ -1,3 +1,5 @@
+import SubscriberLinks from "@/components/SubscriberLinks";
+
 const FAQ = [
   {
     q: "מה זה היטל השבחה?",
@@ -86,6 +88,8 @@ export default function Home() {
           </a>
         </div>
         <p className="text-xs text-gray-400 mt-2">המחיר נקבע לפי היקף ההכרעות בוועדה שלך, ומוצג לפני התשלום</p>
+        <p className="text-sm text-gray-600 mt-5 mb-0">בודקים הרבה? עורכי דין, שמאים ומשרדים עובדים עם מנוי שנתי:</p>
+        <SubscriberLinks variant="hero" />
         <a
           href="/hetel-hasbaha/upgrade/"
           className="block mt-4 bg-[#eef4f9] border border-[#b9cfe0] rounded-xl px-5 py-3 text-sm text-[#14364f] hover:bg-[#e2edf5] transition-colors max-w-md mx-auto"
