@@ -127,9 +127,6 @@ export default function SubscribePage() {
                   בקרוב. החבילה תיפתח כשיושלם מנוע החיפוש בהחלטות. מחיר צפוי: {fmt(price.installmentsMonthlyNis)} ₪ לחודש.
                 </div>
               )}
-              {p.availability === "quote" && (
-                <div className="mb-3 text-sm text-gray-600">מחיר לפי הצעה, החל מ-{fmt(p.prices.machria.installmentsMonthlyNis)} ₪ לחודש.</div>
-              )}
 
               <ul className="text-sm text-gray-700 space-y-1 mb-4 list-disc pr-5">
                 {p.features.map((f) => (
