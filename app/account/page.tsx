@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import {
-  getMySubscriptions, setMembers, useSession, rememberNext,
-  PLAN_NAMES, PRODUCT_NAMES, type MySubscription,
+  getMySubscriptions, setMembers, useSession, rememberNext, getMyLibrary, libraryHref, requestCoverage,
+  PLAN_NAMES, PRODUCT_NAMES, type MySubscription, type LibraryItem,
 } from "@/lib/subscriptions";
 
 const BASE = "/hetel-hasbaha";
@@ -64,6 +64,101 @@ function Members({ sub, onSaved }: { sub: MySubscription; onSaved: () => void })
   );
 }
 
+const STATUS_LABELS: Record<string, string> = {
+  pending_payment: "בהכנה",
+  queued_for_classification: "ממתין לסיווג",
+  pending_upload: "ממתין להעלאת מסמכים",
+  uploaded: "בעיבוד",
+  analyzing: "בעיבוד",
+  pending_admin_review: "בבדיקה",
+  ready: "מוכן",
+  sent: "נשלח אליכם",
+};
+
+function Library({ items }: { items: LibraryItem[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="mt-6 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+      <h2 className="font-bold text-[#14364f] mb-3">הספרייה שלי</h2>
+      <ul className="divide-y divide-gray-100">
+        {items.map((it) => {
+          const href = libraryHref(it);
+          const label = `${it.kind === "stage1" ? "בדיקה מקדימה" : "עיקרי דברים"}${it.name ? `, ${it.name}` : ""}${it.block ? `, גוש ${it.block} חלקה ${it.plot ?? ""}` : ""}`;
+          return (
+            <li key={`${it.kind}-${it.id}`} className="py-2.5 flex items-baseline justify-between gap-3 text-sm">
+              <div>
+                {href ? (
+                  <a href={href} className="text-[#1e5a8a] underline font-medium">{label}</a>
+                ) : (
+                  <span className="font-medium text-gray-700">{label}</span>
+                )}
+                <div className="text-xs text-gray-500">{heDate(it.created_at)}</div>
+              </div>
+              <span className="text-xs text-gray-500 whitespace-nowrap">{STATUS_LABELS[it.status] ?? it.status}</span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function CoverageRequest({ sub, token, onSent }: { sub: MySubscription; token: string; onSent: () => void }) {
+  const [name, setName] = useState("");
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const left = sub.completions_per_year - sub.completions_used;
+  if (sub.completions_per_year <= 0 || !(sub.products === "machria" || sub.products === "both")) return null;
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      await requestCoverage(token, name.trim(), note.trim());
+      setMsg({ ok: true, text: "הבקשה התקבלה. נעדכן אתכם במייל כשהכיסוי יושלם." });
+      setName("");
+      setNote("");
+      onSent();
+    } catch (err) {
+      setMsg({ ok: false, text: (err as Error).message === "quota_exceeded" ? "נוצלו כל בקשות ההשלמה של השנה." : "לא הצלחנו לשלוח. נסו שוב." });
+    }
+    setBusy(false);
+  }
+
+  return (
+    <form onSubmit={send} className="mt-4 border-t border-gray-100 pt-4">
+      <div className="text-sm font-medium text-[#14364f] mb-1">חסר ועדה במאגר? בקשת השלמת כיסוי</div>
+      <p className="text-xs text-gray-500 mb-2">נותרו {left} מתוך {sub.completions_per_year} בקשות השנה.</p>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="שם הוועדה המקומית שחסרה"
+        required
+        disabled={left <= 0}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2"
+      />
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="הערה (אופציונלי)"
+        disabled={left <= 0}
+        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-2"
+      />
+      {msg && <p className={`text-sm mb-2 ${msg.ok ? "text-[#2e6b4a]" : "text-[#8a2f22]"}`}>{msg.text}</p>}
+      <button
+        type="submit"
+        disabled={busy || left <= 0}
+        className="bg-[#1e5a8a] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#14364f] disabled:opacity-50 cursor-pointer"
+      >
+        {busy ? "שולח..." : "שליחת בקשה"}
+      </button>
+    </form>
+  );
+}
+
 export default function AccountPage() {
   const router = useRouter();
   const { session, loading } = useSession();
@@ -71,10 +166,12 @@ export default function AccountPage() {
   const [waiting, setWaiting] = useState(false);
   const [timedOut, setTimedOut] = useState(false);
   const polls = useRef(0);
+  const [library, setLibrary] = useState<LibraryItem[]>([]);
 
   const load = useCallback(async () => {
     const list = await getMySubscriptions();
     setSubs(list);
+    getMyLibrary().then(setLibrary);
     return list;
   }, []);
 
@@ -193,10 +290,14 @@ export default function AccountPage() {
               <p className="mt-4 text-sm text-[#8a2f22]">המכסה החודשית נוצלה. היא תתחדש בראשון לחודש הבא, ובינתיים אפשר לשלם על בדיקה בודדת.</p>
             ) : null}
 
+            <CoverageRequest sub={s} token={session.access_token} onSent={load} />
+
             {s.is_owner && s.seats > 1 && <Members sub={s} onSaved={load} />}
           </div>
         ))}
       </div>
+
+      <Library items={library} />
     </main>
   );
 }

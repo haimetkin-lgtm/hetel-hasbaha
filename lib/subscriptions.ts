@@ -39,6 +39,7 @@ export interface MySubscription {
   checks_per_month: number;
   stage2_per_month: number;
   completions_per_year: number;
+  completions_used: number;
   usage_checks: number;
   usage_stage2: number;
   starts_at: string;
@@ -158,6 +159,45 @@ export async function openSubscriberStage2(
   });
   if (!r.ok || !r.body.case2_id) throw new Error(r.body.error || "open_failed");
   return { case2Id: r.body.case2_id as string, remaining: r.body.remaining as number };
+}
+
+export interface LibraryItem {
+  kind: "stage1" | "stage2";
+  product: "machria" | "rami";
+  id: string;
+  created_at: string;
+  name: string | null;
+  block: string | null;
+  plot: string | null;
+  status: string;
+}
+
+// כל מה שהמשתמש פתח דרך מנוי (בעל המנוי רואה את כל מה שנפתח במנוי שלו)
+export async function getMyLibrary(): Promise<LibraryItem[]> {
+  const { data, error } = await supabase.rpc("my_subscription_library");
+  if (error || !Array.isArray(data)) return [];
+  return data as LibraryItem[];
+}
+
+const SITES = {
+  machria: "https://haimetkin-lgtm.github.io/hetel-hasbaha",
+  rami: "https://haimetkin-lgtm.github.io/rami",
+} as const;
+
+// קישור לפתיחת פריט מהספרייה בדף המתאים באתר שלו
+export function libraryHref(item: LibraryItem): string | null {
+  const site = SITES[item.product];
+  if (item.kind === "stage1") return `${site}/report/?case=${item.id}`;
+  if (item.status === "ready" || item.status === "sent") return `${site}/argument/?case2=${item.id}`;
+  if (item.status === "pending_upload") return `${site}/upload/?case2=${item.id}`;
+  return null;
+}
+
+// בקשה להשלמת כיסוי (ועדה או יישוב שחסרים במאגר), נספרת מול המכסה השנתית
+export async function requestCoverage(token: string, name: string, note: string): Promise<{ remaining: number }> {
+  const r = await authedPost("/subscriber/coverage-request", token, { product: "machria", name, note });
+  if (!r.ok) throw new Error(r.body.error || "request_failed");
+  return { remaining: r.body.remaining as number };
 }
 
 // זוכר לאן לחזור אחרי התחברות (כולל חזרה מגוגל)
