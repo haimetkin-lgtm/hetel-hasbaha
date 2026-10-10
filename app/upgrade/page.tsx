@@ -1,13 +1,18 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useSession, getMySubscriptions, usableStage2ForMachria, openSubscriberStage2, rememberNext, type MySubscription } from "@/lib/subscriptions";
 import { supabase, supabaseConfigured, CaseRow, STAGE2_PRICE_NIS, getCase, startCheckout } from "@/lib/supabase";
 import FeeCalculator from "@/components/FeeCalculator";
 
 
 function UpgradeContent() {
   const params = useSearchParams();
+  const router = useRouter();
+  const { session } = useSession();
+  const [subscription, setSubscription] = useState<MySubscription | null>(null);
+  const [subscribing, setSubscribing] = useState(false);
   const caseId = params.get("case");
   const paymentFailed = params.get("payment") === "failed";
   const [caseRow, setCaseRow] = useState<CaseRow | null>(null);
@@ -18,6 +23,32 @@ function UpgradeContent() {
     if (!caseId || !supabaseConfigured) return;
     getCase(caseId).then((data) => setCaseRow(data));
   }, [caseId]);
+
+  useEffect(() => {
+    if (!session) { setSubscription(null); return; }
+    getMySubscriptions().then((list) => setSubscription(usableStage2ForMachria(list)));
+  }, [session]);
+
+  // עיקרי דברים על חשבון המנוי: מנצל אחד מהמכסה החודשית, ממשיכים להעלאת המסמכים
+  async function handleSubscriberOpen() {
+    if (!session) return;
+    setSubscribing(true);
+    setError(null);
+    try {
+      let opened;
+      try {
+        opened = await openSubscriberStage2(session.access_token, { stage1CaseId: caseId || undefined });
+      } catch (e) {
+        // תיק שלב א' שלא נפתח מהמנוי הזה: ממשיכים בלי להצמיד אותו
+        if ((e as Error).message !== "case_not_found") throw e;
+        opened = await openSubscriberStage2(session.access_token, { committee: caseRow?.committee_name || undefined });
+      }
+      router.push(`/upload/?case2=${opened.case2Id}`);
+    } catch (e) {
+      setError((e as Error).message === "quota_exceeded" ? "המכסה החודשית של עיקרי דברים נוצלה. אפשר לשלם על המסמך הזה בנפרד." : "לא הצלחנו לפתוח על חשבון המנוי. נסו שוב, או שלמו בנפרד.");
+      setSubscribing(false);
+    }
+  }
 
   async function handlePay() {
     if (!supabaseConfigured) {
@@ -70,6 +101,26 @@ function UpgradeContent() {
         <p className="text-sm text-[#8a2f22] mb-4">התשלום לא הושלם. אפשר לנסות שוב.</p>
       )}
       {error && <p className="text-sm text-[#8a2f22] mb-4">{error}</p>}
+      {subscription ? (
+        <div className="bg-[#eef7f1] border border-[#bfdcc9] rounded-lg p-3 mb-4">
+          <div className="text-sm text-[#256f46] mb-2">
+            יש לכם מנוי פעיל: נותרו <strong>{subscription.stage2_per_month - subscription.usage_stage2}</strong> מסמכי עיקרי דברים החודש.
+          </div>
+          <button
+            onClick={handleSubscriberOpen}
+            disabled={subscribing || submitting}
+            className="w-full bg-[#2e8b57] text-white font-bold py-3 rounded-lg hover:bg-[#256f46] disabled:opacity-50 cursor-pointer disabled:cursor-default"
+          >
+            {subscribing ? "פותח..." : "הפקה על חשבון המנוי"}
+          </button>
+        </div>
+      ) : !session ? (
+        <p className="text-xs text-gray-500 mb-4">
+          מנויים?{" "}
+          <a href="/hetel-hasbaha/login/" onClick={() => rememberNext("/upgrade/" + window.location.search)} className="underline">התחברו</a>{" "}
+          כדי להפיק עיקרי דברים על חשבון המנוי, בלי לשלם בכל פעם.
+        </p>
+      ) : null}
       <div className="flex flex-col sm:flex-row gap-3">
         <button
           onClick={handlePay}

@@ -168,9 +168,21 @@ export default function AccountPage() {
             <p className="text-xs text-gray-500 mt-1">המכסה מתחדשת בראשון לכל חודש.</p>
 
             {s.stage2_per_month > 0 && (
-              <p className="text-xs text-gray-500 mt-3">
-                {s.stage2_per_month} מסמכי עיקרי דברים בחודש כלולים במנוי. הפעלה אוטומטית שלהם תתווסף בקרוב, בינתיים צרו קשר ונפיק אותם עבורכם.
-              </p>
+              <div className="mt-4">
+                <div className="flex justify-between text-sm mb-1">
+                  <span>עיקרי דברים החודש</span>
+                  <strong>{s.usage_stage2} מתוך {s.stage2_per_month}</strong>
+                </div>
+                <Meter used={s.usage_stage2} total={s.stage2_per_month} />
+                {s.usage_stage2 < s.stage2_per_month && (s.products === "machria" || s.products === "both") && (
+                  <a
+                    href="/hetel-hasbaha/upgrade/"
+                    className="mt-3 block text-center border-2 border-[#2e8b57] text-[#256f46] font-bold py-2.5 rounded-lg hover:bg-[#eef7f1]"
+                  >
+                    הפקת עיקרי דברים חדש
+                  </a>
+                )}
+              </div>
             )}
 
             {s.usage_checks < s.checks_per_month && (s.products === "machria" || s.products === "both") ? (
